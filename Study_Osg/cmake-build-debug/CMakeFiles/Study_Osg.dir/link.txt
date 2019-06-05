@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/Study_Osg.dir/main.cpp.o  -o Study_Osg -Wl,-rpath,/usr/local/lib64 /usr/local/lib64/libosgGA.so /usr/local/lib64/libosgViewer.so /usr/local/lib64/libosgDB.so /usr/local/lib64/libosgUtil.so /usr/local/lib64/libosg.so /usr/local/lib64/libosgQt.so /usr/local/lib64/libosgFX.so /usr/local/lib64/libOpenThreads.so 

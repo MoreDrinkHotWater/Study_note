@@ -1,0 +1,4 @@
+/home/zhihui/Study_Osg/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/zhihui/Study_Osg/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/zhihui/Study_Osg/cmake-build-debug/CMakeFiles/OSGWidgets.dir
+/home/zhihui/Study_Osg/cmake-build-debug/CMakeFiles/Study_Osg.dir
