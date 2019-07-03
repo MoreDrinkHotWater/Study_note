@@ -28,7 +28,6 @@
 #include <osgFX/Scribe>
 #include <osgUtil/LineSegmentIntersector>
 
-
 osg::ref_ptr<osg::Node> createQuad();
 osg::ref_ptr<osg::Node> createLine();
 osg::ref_ptr<osg::Node> createShape();
@@ -99,7 +98,7 @@ public:
 };*/
 
 
-class CPickHandler: public osgGA::GUIEventHandler
+/*class CPickHandler: public osgGA::GUIEventHandler
 {
 public:
     //构造函数中有参数　osgViewer::Viewer *　,这样就可以手动把viewer传入类中了
@@ -154,7 +153,7 @@ protected:
     }
 
     osgViewer::Viewer *mViewer;
-};
+};*/
 
 int main() {
     /*
@@ -311,13 +310,14 @@ int main() {
      * 绘制线宽
      * 子函数：osg::ref_ptr<osg::Node> createLine()
      */
-    /*osgViewer::Viewer viewer;
-    osg::Group *root= new osg::Group;
+    osgViewer::Viewer viewer;
+    osg::Group *root = new osg::Group;
     root->addChild(createLine().get());
     viewer.addEventHandler(new osgViewer::WindowSizeHandler);
+    viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root);
     viewer.realize();
-    viewer.run();*/
+    viewer.run();
 
 
     /*
@@ -354,7 +354,7 @@ int main() {
      * pick
      * 需要类　class CPickHandler: public osgGA::GUIEventHandler
      */
-    osgViewer::Viewer viewer;
+    /*osgViewer::Viewer viewer;
     osg::ref_ptr<osg::Group> root = new osg::Group() ;
     root ->addChild(osgDB::readNodeFile("/home/zhihui/OSGlib/OSG/OpenSceneGraph-Data-master/cessna.osg"));
 
@@ -371,7 +371,33 @@ int main() {
     viewer.setSceneData(root.get());
     viewer.addEventHandler(new CPickHandler(&viewer));
     viewer.realize();
-    viewer.run();
+    viewer.run();*/
+
+    /*
+     * test_13
+     * 使用path文件
+     */
+    /*osgViewer::Viewer viewer;
+    viewer.setSceneData(osgDB::readNodeFile("/home/zhihui/OSGlib/OSG/OpenSceneGraph-Data-master/glider.osg"));
+
+    osg::ref_ptr<osgGA::AnimationPathManipulator> amp=new osgGA::AnimationPathManipulator("/home/zhihui/Study_Osg/cmake-build-debug/saved_animation.path");
+
+    if(amp!=nullptr_t())
+    {
+        printf("success");
+    }
+    else
+    {
+        printf("false");
+    }
+    viewer.setCameraManipulator(amp.get());
+    viewer.realize();
+    viewer.run();*/
+
+    /*
+     * test_14
+     * 路径编辑器
+     */
 }
 
 /*
@@ -420,44 +446,68 @@ osg::ref_ptr <osg::Node> createQuad()
     return geode.get();
 }*/
 
-/*
-osg::ref_ptr<osg::Node> createLine()
-{
-    osg::ref_ptr<osg::Geometry> geom=new osg::Geometry;
 
-    //限制线的宽度线宽是一种属性和状态,在 OSG 当中有专门的属性和状态类来管理这些。
-    //所有启动属性和状态的操作使用都与此类似。
-    osg::ref_ptr<osg::LineWidth> LineSize=new osg::LineWidth;
-    LineSize->setWidth(1.0);
+osg::ref_ptr<osg::Node> createLine() {
+    osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
+
+    // 限制线的宽度线宽是一种属性和状态,在 OSG 当中有专门的属性和状态类来管理这些。
+    // 所有启动属性和状态的操作使用都与此类似。
+    osg::ref_ptr<osg::LineWidth> LineSize = new osg::LineWidth;
+    LineSize->setWidth(3.0);
     geom->getOrCreateStateSet()->setAttributeAndModes(LineSize.get(),osg::StateAttribute::ON);
+    // 关闭光照效果
+    geom->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-    //首先定义四个点
+    // 首先定义四个点
     osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array;
-    geom->setVertexArray(v.get() );
-    v->push_back(osg::Vec3( -1.f, 0.f, -1.f ) );
+
+    /*v->push_back(osg::Vec3( -1.f, 0.f, -1.f ) );
     v->push_back(osg::Vec3( 1.f, 0.f, -1.f ) );
     v->push_back(osg::Vec3( 1.f, 0.f, 1.f ) );
-    v->push_back(osg::Vec3( -1.f, 0.f, 1.f ) );
+    v->push_back(osg::Vec3( -1.f, 0.f, 1.f ) );*/
+    v->push_back(osg::Vec3(0.0f, 0.0f, 0.0f));
+    v->push_back(osg::Vec3(1000.0f, 0.0f, 0.0f));
+    v->push_back(osg::Vec3(0.0f, 0.0f, 0.0f));
+    v->push_back(osg::Vec3(0.0f, 1000.0f, 0.0f));
+    v->push_back(osg::Vec3(0.0f, 0.0f, 0.0f));
+    v->push_back(osg::Vec3(0.0f, 0.0f, 1000.0f));
+    geom->setVertexArray(v.get());
+
+
     //定义颜色数组
     osg::ref_ptr<osg::Vec4Array> c = new osg::Vec4Array;
-    geom->setColorArray(c.get() );
-    geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
-    c->push_back(osg::Vec4( 1.f, 0.f, 0.f, 1.f ) );
-    c->push_back(osg::Vec4( 0.f, 1.f, 0.f, 1.f ) );
-    c->push_back(osg::Vec4( 0.f, 0.f, 1.f, 1.f ) );
-    c->push_back(osg::Vec4( 1.f, 1.f, 1.f, 1.f ) );
+
+    c->push_back(osg::Vec4(1.f, 0.f, 0.f, 0.f));
+    c->push_back(osg::Vec4(0.f, 1.f, 0.f, 0.f));
+    c->push_back(osg::Vec4(0.f, 0.f, 1.f, 0.f));
+    c->push_back(osg::Vec4(1.f, 1.f, 1.f, 0.f));
+    geom->setColorArray(c.get());
+    geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+
+
     //定义法线
-    osg::ref_ptr<osg::Vec3Array> n = new osg::Vec3Array;
-    geom->setNormalArray( n.get() );
-    geom->setNormalBinding( osg::Geometry::BIND_OVERALL );
-    n->push_back(osg::Vec3( 0.f, -1.f, 0.f ) );
+    /* osg::ref_ptr<osg::Vec3Array> n = new osg::Vec3Array;
+     n->push_back(osg::Vec3( 0.f, -1.f, 0.f ) );
+
+     geom->setNormalArray( n.get() );
+     geom->setNormalBinding( osg::Geometry::BIND_OVERALL );*/
+
+
     //设置顶点关联方式,这里把顶点关联方式改成了：　LINE_LOOP
-    geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINE_LOOP, 0, 4 ) );
+    geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
+
+    geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 2, 2));
+
+    geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 4, 2));
+
+
+
+
     //几何组结点
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->addDrawable( geom.get() );
+    geode->addDrawable(geom.get());
     return geode.get();
-}*/
+}
 
 
 /*
