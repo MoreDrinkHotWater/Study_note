@@ -1,0 +1,46 @@
+#include "mainwindow.h"
+#include <QtWidgets>
+// QtWidgets include QtCore QtGui QPlainTextEdit
+//#include <QtCore>
+//#include <QtGui>
+//#include <QPlainTextEdit>
+
+// 在构造函数中，我们首先创建一个QPlainTextEdit小部件作为主窗口(此对象)的子窗口。
+MainWindow ::MainWindow()
+:textEdit(new QPlainTextEdit)
+{
+    // 为这个子窗口创建居中的属性
+    setCentralWidget(textEdit);
+    
+    // 设置用户界面
+    createActions();   
+    createStatusBar();
+    
+    // 恢复用户的首选项
+    readSettings();
+    
+    // 信号槽:每当用户修改QPlainTextEdit中的文本时，我们都希望更新标题栏，以显示文件已被修改。
+    connect(textEdit->document(), &QTextDocument::contentsChanged, this, &MainWindow::commitDate);
+    
+#ifndef  QT_NO_SESSIONMANAGER
+    QGuiApplication::setFallbackSessionManagementEnabled(false);
+    
+    connect(qApp, &QGuiApplication::commitDataRequest, this, &MainWindow::commitDate);
+    
+#endif
+    // 私有的setCurrentFile()函数设置窗口标题
+    setCurrentFile(QString());
+    
+    setUnifiedTitleAndToolBarOnMac(true);
+    
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(maybeSave())
+    {
+        textEdit->clear();
+        setCurrentFile(QString());
+    }
+}
+
